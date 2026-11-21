@@ -4,6 +4,7 @@ import { Capacitor } from "@capacitor/core";
 import { App as CapApp } from "@capacitor/app";
 import { StatusBar, Style } from "@capacitor/status-bar";
 import Header from "./components/Header";
+import MobileBottomNav from "./components/MobileBottomNav";
 import { useAuth } from "./context/AuthContext";
 
 // Lazy-load pages for optimal bundle splitting and performance
@@ -121,6 +122,7 @@ export default function App() {
           />
         </Routes>
       </Suspense>
+      <MobileBottomNav />
       <Footer />
     </>
   );
