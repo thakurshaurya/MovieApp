@@ -16,7 +16,8 @@ function resolveApiBaseUrl() {
     return "http://10.0.2.2:5001/api";
   }
 
-  return "http://localhost:5001/api";
+  // In web browsers (Vercel deployment or local Vite proxy), use relative /api
+  return "/api";
 }
 
 const api = axios.create({ baseURL: resolveApiBaseUrl() });

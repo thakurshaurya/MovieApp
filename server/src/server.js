@@ -46,12 +46,19 @@ app.use("/api/watchlist", watchlistRoutes);
 app.use("/api/history", historyRoutes);
 
 const PORT = process.env.PORT || 5001;
+
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected");
-    app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
+    if (!process.env.VERCEL) {
+      app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
+    }
   })
   .catch((error) => {
     console.error("MongoDB connection failed:", error.message);
-    process.exit(1);
+    if (!process.env.VERCEL) {
+      process.exit(1);
+    }
   });
+
+export default app;
