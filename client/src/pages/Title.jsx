@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { BookmarkPlus, BookmarkCheck, Play, ArrowLeft, Star, Clock, Calendar, Film, Tv } from "lucide-react";
+import { BookmarkPlus, BookmarkCheck, Play, ArrowLeft, Star, Clock, Calendar, Film, Tv, ChevronLeft, ChevronRight } from "lucide-react";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
 import ContentRow from "../components/ContentRow";
+import CastModal from "../components/CastModal";
 
 const BACKDROP = "https://image.tmdb.org/t/p/original";
 const POSTER = "https://image.tmdb.org/t/p/w500";
@@ -23,6 +24,74 @@ export default function Title() {
   const [selectedSeason, setSelectedSeason] = useState(1);
   const [seasonData, setSeasonData] = useState(null);
   const [loadingSeason, setLoadingSeason] = useState(false);
+
+  // Cast Filmography Modal State & Scroll
+  const [selectedActor, setSelectedActor] = useState(null);
+  const castScrollRef = useRef(null);
+  const isDraggingRef = useRef(false);
+  const dragMovedRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
+
+  function scrollCast(direction) {
+    if (castScrollRef.current) {
+      const offset = Math.max(castScrollRef.current.clientWidth * 0.75, 240);
+      castScrollRef.current.scrollBy({
+        left: direction === "left" ? -offset : offset,
+        behavior: "smooth"
+      });
+    }
+  }
+
+  function handleCastMouseDown(e) {
+    if (!castScrollRef.current) return;
+    isDraggingRef.current = true;
+    dragMovedRef.current = false;
+    startXRef.current = e.pageX - castScrollRef.current.offsetLeft;
+    scrollLeftRef.current = castScrollRef.current.scrollLeft;
+    castScrollRef.current.classList.add("is-dragging");
+  }
+
+  function handleCastMouseMove(e) {
+    if (!isDraggingRef.current || !castScrollRef.current) return;
+    const x = e.pageX - castScrollRef.current.offsetLeft;
+    const walk = (x - startXRef.current) * 1.5;
+    if (Math.abs(walk) > 5) {
+      dragMovedRef.current = true;
+    }
+    castScrollRef.current.scrollLeft = scrollLeftRef.current - walk;
+  }
+
+  function handleCastMouseUpOrLeave() {
+    isDraggingRef.current = false;
+    if (castScrollRef.current) {
+      castScrollRef.current.classList.remove("is-dragging");
+    }
+  }
+
+  // Support mouse wheel scrolling horizontally over the cast row
+  useEffect(() => {
+    const el = castScrollRef.current;
+    if (!el) return;
+
+    function handleWheel(e) {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        const maxScroll = el.scrollWidth - el.clientWidth;
+        if (
+          (e.deltaY > 0 && el.scrollLeft < maxScroll - 1) ||
+          (e.deltaY < 0 && el.scrollLeft > 1)
+        ) {
+          e.preventDefault();
+          el.scrollLeft += e.deltaY * 1.2;
+        }
+      }
+    }
+
+    el.addEventListener("wheel", handleWheel, { passive: false });
+    return () => {
+      el.removeEventListener("wheel", handleWheel);
+    };
+  }, [item]);
 
   useEffect(() => {
     let isMounted = true;
@@ -143,7 +212,7 @@ export default function Title() {
   const releaseYear = (item.release_date || item.first_air_date || "").slice(0, 4);
   const runtime = item.runtime ? `${Math.floor(item.runtime / 60)}h ${item.runtime % 60}m` : null;
   const seasonsCount = item.number_of_seasons ? `${item.number_of_seasons} Season${item.number_of_seasons > 1 ? "s" : ""}` : null;
-  const castList = item.credits?.cast?.slice(0, 8) || [];
+  const castList = item.credits?.cast?.slice(0, 30) || [];
   const validSeasons = (item.seasons || []).filter((s) => s.season_number > 0);
 
   return (
@@ -231,14 +300,88 @@ export default function Title() {
             {/* Cast Members */}
             {castList.length > 0 && (
               <div className="cast-section">
-                <h3>Cast & Performances</h3>
-                <div className="cast-pills">
-                  {castList.map((actor) => (
-                    <span key={actor.id} className="actor-pill">
-                      <strong>{actor.name}</strong>
-                      {actor.character && <span className="character-name"> as {actor.character}</span>}
-                    </span>
-                  ))}
+                <div className="cast-section-header">
+                  <div className="cast-header-title">
+                    <h3>Cast & Performances</h3>
+                    <span className="cast-hint">Tap actor to view filmography</span>
+                  </div>
+                  <div className="cast-scroll-arrows">
+                    <button
+                      type="button"
+                      onClick={() => scrollCast("left")}
+                      aria-label="Scroll cast left"
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => scrollCast("right")}
+                      aria-label="Scroll cast right"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                </div>
+                <div className="cast-scroll-container">
+                  <button
+                    type="button"
+                    className="cast-row-nav left"
+                    onClick={() => scrollCast("left")}
+                    aria-label="Scroll cast left"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+
+                  <div
+                    className="cast-scroll-row"
+                    ref={castScrollRef}
+                    onMouseDown={handleCastMouseDown}
+                    onMouseMove={handleCastMouseMove}
+                    onMouseUp={handleCastMouseUpOrLeave}
+                    onMouseLeave={handleCastMouseUpOrLeave}
+                  >
+                    {castList.map((actor) => (
+                      <button
+                        key={actor.id}
+                        type="button"
+                        className="cast-card"
+                        onClick={() => {
+                          if (dragMovedRef.current) return;
+                          setSelectedActor(actor.id);
+                        }}
+                        title={`View ${actor.name}'s filmography`}
+                      >
+                        <div className="cast-photo-wrap">
+                          {actor.profile_path ? (
+                            <img
+                              src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
+                              alt={actor.name}
+                              className="cast-photo"
+                              loading="lazy"
+                              draggable="false"
+                            />
+                          ) : (
+                            <div className="cast-photo-fallback">
+                              {actor.name?.slice(0, 1) || "A"}
+                            </div>
+                          )}
+                        </div>
+                        <span className="cast-name">{actor.name}</span>
+                        {actor.character && (
+                          <span className="cast-character">as {actor.character}</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    className="cast-row-nav right"
+                    onClick={() => scrollCast("right")}
+                    aria-label="Scroll cast right"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
                 </div>
               </div>
             )}
@@ -336,6 +479,13 @@ export default function Title() {
           </div>
         )}
       </div>
+
+      {/* Cast Filmography Modal */}
+      <CastModal
+        isOpen={Boolean(selectedActor)}
+        actorId={selectedActor}
+        onClose={() => setSelectedActor(null)}
+      />
     </main>
   );
 }

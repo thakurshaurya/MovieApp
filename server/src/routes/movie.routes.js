@@ -6,7 +6,8 @@ import {
   searchTitles,
   getTvSeason,
   getDiscover,
-  getGenres
+  getGenres,
+  getPersonCredits
 } from "../controllers/movie.controller.js";
 import { getAiRecommendations } from "../controllers/recommendation.controller.js";
 import { optionalAuth } from "../middleware/auth.js";
@@ -21,6 +22,7 @@ router.get("/discover/:type", getDiscover);
 router.get("/genres/:type", getGenres);
 router.get("/search", searchTitles);
 router.get("/tv/:id/season/:seasonNumber", getTvSeason);
+router.get("/person/:id", getPersonCredits);
 router.get("/:type/:id", getDetails);
 
 export default router;

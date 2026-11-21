@@ -181,6 +181,35 @@ export async function getDetails(req, res) {
   }
 }
 
+export async function getPersonCredits(req, res) {
+  try {
+    const { id } = req.params;
+    const [person, credits] = await Promise.all([
+      tmdb(`/person/${id}`),
+      tmdb(`/person/${id}/combined_credits`).catch(() => ({ cast: [] }))
+    ]);
+
+    // Sort credits by popularity and only include entries with posters
+    const knownFor = (credits.cast || [])
+      .filter((item) => item.poster_path && (item.media_type === "movie" || item.media_type === "tv"))
+      .sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+
+    res.json({
+      person: {
+        id: person.id,
+        name: person.name,
+        biography: person.biography || "",
+        profile_path: person.profile_path,
+        known_for_department: person.known_for_department || "Acting"
+      },
+      credits: knownFor
+    });
+  } catch (error) {
+    console.error("getPersonCredits error:", error);
+    res.status(502).json({ message: error.message || "Failed to load actor filmography." });
+  }
+}
+
 export async function getTvSeason(req, res) {
   try {
     const { id, seasonNumber } = req.params;
