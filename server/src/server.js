@@ -10,6 +10,30 @@ import historyRoutes from "./routes/history.routes.js";
 dotenv.config();
 const app = express();
 
+// Serverless-friendly MongoDB connection caching
+let cachedDbPromise = null;
+
+async function connectDB() {
+  if (mongoose.connection.readyState === 1) {
+    return;
+  }
+
+  if (!process.env.MONGO_URI) {
+    throw new Error("MONGO_URI environment variable is missing in Vercel settings.");
+  }
+
+  if (!cachedDbPromise) {
+    cachedDbPromise = mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+    }).catch((err) => {
+      cachedDbPromise = null;
+      throw err;
+    });
+  }
+
+  await cachedDbPromise;
+}
+
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5001",
@@ -39,7 +63,37 @@ app.use(
 );
 app.use(express.json({ limit: "500kb" }));
 
-app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
+// Health check with DB status
+app.get("/api/health", async (_req, res) => {
+  let dbStatus = "disconnected";
+  try {
+    await connectDB();
+    dbStatus = "connected";
+  } catch (err) {
+    dbStatus = `error: ${err.message}`;
+  }
+  res.json({
+    status: "ok",
+    database: dbStatus,
+    mongoConfigured: Boolean(process.env.MONGO_URI)
+  });
+});
+
+// Middleware to ensure DB connection before running API handlers
+app.use("/api", async (req, res, next) => {
+  if (req.path === "/health") return next();
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error("Database connection failure:", error.message);
+    res.status(500).json({
+      message: "Database connection failed",
+      error: error.message
+    });
+  }
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/movies", movieRoutes);
 app.use("/api/watchlist", watchlistRoutes);
@@ -47,18 +101,16 @@ app.use("/api/history", historyRoutes);
 
 const PORT = process.env.PORT || 5001;
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("MongoDB connected");
-    if (!process.env.VERCEL) {
+if (!process.env.VERCEL) {
+  connectDB()
+    .then(() => {
+      console.log("MongoDB connected");
       app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
-    }
-  })
-  .catch((error) => {
-    console.error("MongoDB connection failed:", error.message);
-    if (!process.env.VERCEL) {
+    })
+    .catch((error) => {
+      console.error("MongoDB connection failed:", error.message);
       process.exit(1);
-    }
-  });
+    });
+}
 
 export default app;
