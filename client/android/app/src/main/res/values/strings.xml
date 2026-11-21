@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Antarctic</string>
+    <string name="title_activity_main">Antarctic</string>
+    <string name="package_name">com.antarctic.streaming</string>
+    <string name="custom_url_scheme">com.antarctic.streaming</string>
+</resources>

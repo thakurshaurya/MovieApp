@@ -1,0 +1,32 @@
+# Client Environment & Secrets
+.env
+.env.*
+*.env
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Production build
+dist/
+dist-ssr/
+.vite/
+
+# AI Artifacts
+agent.md
+AGENT.md
+*.agent.md
+.cursor/
+.gemini/
+.antigravity/
+
+# Android generated
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/app/src/main/assets/public/
+
+# Logs & OS
+*.log
+.DS_Store

@@ -1,0 +1,23 @@
+# Server Environment & Secrets
+.env
+.env.*
+*.env
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+logs/
+
+# AI Artifacts
+agent.md
+AGENT.md
+*.agent.md
+.cursor/
+.gemini/
+.antigravity/
+
+# OS
+.DS_Store
