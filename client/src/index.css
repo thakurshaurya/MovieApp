@@ -3184,45 +3184,79 @@ button {
 
   /* Hero adjustments */
   .hero {
-    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-end;
+    min-height: 520px;
     height: auto;
-    padding: 40px 18px 55px;
+    padding: 70px 16px 28px;
     background-position: center top;
+    background-size: cover;
+  }
+  .hero-content {
+    max-width: 100%;
+    width: 100%;
   }
   .hero h1 {
-    font-size: 34px;
+    font-size: 32px;
     letter-spacing: -1px;
-    margin: 8px 0 12px;
+    margin: 8px 0 10px;
+    word-break: break-word;
   }
   .hero-description {
     font-size: 13px;
-    line-height: 1.6;
-    margin: 12px 0 20px;
+    line-height: 1.5;
+    margin: 10px 0 16px;
     -webkit-line-clamp: 3;
+    max-width: 100%;
   }
   .hero-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 8px;
+    width: 100%;
   }
-  .hero-actions .primary-button, .hero-actions .secondary-button {
-    flex: 1 1 auto;
-    min-height: 40px;
-    font-size: 11px;
-    padding: 0 14px;
+  .hero-actions .primary-button {
+    flex: 1 1 100%;
+    justify-content: center;
+    min-height: 42px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .hero-actions .secondary-button {
+    flex: 1 1 calc(50% - 4px);
+    justify-content: center;
+    min-height: 38px;
+    font-size: 11.5px;
+    padding: 0 10px;
+  }
+  .hero-footnote {
+    margin-top: 14px;
+    font-size: 8.5px;
+    letter-spacing: 1px;
+    flex-wrap: wrap;
+    gap: 6px;
   }
   .hero-index {
     position: static;
-    margin-top: 28px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
     justify-content: space-between;
     width: 100%;
   }
   .hero-pagination-dots {
     display: flex;
+    gap: 5px;
   }
   .dot-pill {
-    width: 16px;
+    width: 14px;
+    height: 4px;
   }
   .dot-pill.active {
-    width: 26px;
+    width: 24px;
   }
 
   /* Rows and grids */
@@ -3306,12 +3340,40 @@ button {
 
   /* Player Page */
   .player-page {
-    padding: 16px 12px 40px;
+    padding: 14px 12px 40px;
   }
   .player-topbar {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+    margin-bottom: 14px;
+  }
+  .player-title-info {
+    text-align: left;
+    width: 100%;
+  }
+  .player-title-info h2 {
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .player-ep-sub {
+    font-size: 11.5px;
+  }
+  .player-topbar-actions {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+  }
+  .player-customize-toggle-btn,
+  .external-player-link {
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+    padding: 7px 10px;
+    font-size: 11.5px;
+    white-space: nowrap;
   }
   .episode-selector-bar {
     padding: 10px 12px;
@@ -3326,18 +3388,60 @@ button {
     width: 100%;
     justify-content: space-between;
   }
+  .player-episodes-shelf {
+    margin-top: 24px;
+    padding-top: 20px;
+  }
   .player-episodes-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+    margin-bottom: 16px;
   }
   .player-episodes-controls {
     width: 100%;
+    display: flex;
+    align-items: center;
     justify-content: space-between;
+    gap: 8px;
+  }
+  .player-season-dropdown select {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+  .ep-nav-btn {
+    padding: 6px 10px;
+    font-size: 11px;
   }
   .player-episodes-grid {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 12px;
+  }
+  .player-episode-card {
+    display: grid;
+    grid-template-columns: 125px 1fr;
+    align-items: stretch;
+  }
+  .player-ep-thumb {
+    aspect-ratio: 16/9;
+    height: 100%;
+  }
+  .player-ep-content {
+    padding: 8px 10px;
+    justify-content: center;
+  }
+  .player-ep-content h4 {
+    font-size: 13px;
+    margin-bottom: 2px;
+    -webkit-line-clamp: 1;
+  }
+  .player-ep-overview {
+    font-size: 11px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   /* Search Page */
@@ -3428,11 +3532,15 @@ button {
     flex: 0 0 165px;
     width: 165px;
   }
-  .hero h1 {
-    font-size: 28px;
+  .hero {
+    padding: 60px 12px 24px;
+    min-height: 500px;
   }
-  .hero-actions {
-    flex-direction: column;
+  .hero h1 {
+    font-size: 26px;
+  }
+  .player-episode-card {
+    grid-template-columns: 110px 1fr;
   }
 }
 

@@ -10,10 +10,9 @@ function resolveApiBaseUrl() {
     return custom;
   }
 
-  // Capacitor Native Android Detection
+  // Capacitor Native Android Detection: use production Vercel backend URL
   if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === "android") {
-    // 10.0.2.2 is the Android emulator's loopback alias to the host computer
-    return "http://10.0.2.2:5001/api";
+    return "https://movieapp-six-lovat.vercel.app/api";
   }
 
   // In web browsers (Vercel deployment or local Vite proxy), use relative /api
