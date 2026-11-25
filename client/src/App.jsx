@@ -17,6 +17,7 @@ const Auth = lazy(() => import("./pages/Auth"));
 const Watchlist = lazy(() => import("./pages/Watchlist"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Player = lazy(() => import("./pages/Player"));
+const Download = lazy(() => import("./pages/Download"));
 
 function Protected({ children }) {
   const { user, loading } = useAuth();
@@ -100,6 +101,7 @@ export default function App() {
           <Route path="/watch/:type/:id" element={<Player />} />
           <Route path="/login" element={<Auth mode="login" />} />
           <Route path="/register" element={<Auth mode="register" />} />
+          <Route path="/download" element={<Download />} />
           <Route
             path="/watchlist"
             element={

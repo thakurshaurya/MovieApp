@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Search, Menu, X, UserRound, Bookmark, Film, Tv, Home as HomeIcon } from "lucide-react";
+import { Search, Menu, X, UserRound, Bookmark, Film, Tv, Home as HomeIcon, Download } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export default function Header() {
@@ -144,6 +144,10 @@ export default function Header() {
             <NavLink to="/" end className={({ isActive }) => (isActive ? "active" : "")}>
               <HomeIcon size={16} className="nav-icon" />
               <span>Home</span>
+            </NavLink>
+            <NavLink to="/download" className={({ isActive }) => (isActive ? "active" : "")}>
+              <Download size={16} className="nav-icon" />
+              <span>Get App</span>
             </NavLink>
             <NavLink
               to="/movies"
