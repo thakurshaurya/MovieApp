@@ -91,6 +91,24 @@ export default function Header() {
         </NavLink>
 
         <NavLink
+          to="/bollywood"
+          className={location.pathname === "/bollywood" ? "active" : ""}
+          onClick={() => setOpen(false)}
+        >
+          <Film size={18} className="nav-icon" />
+          <span>Bollywood</span>
+        </NavLink>
+
+        <NavLink
+          to="/download"
+          className={location.pathname === "/download" ? "active" : ""}
+          onClick={() => setOpen(false)}
+        >
+          <Download size={18} className="nav-icon" />
+          <span>Get App (APK)</span>
+        </NavLink>
+
+        <NavLink
           to="/search"
           className={location.pathname === "/search" ? "active" : ""}
           onClick={() => setOpen(false)}
