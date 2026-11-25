@@ -107,6 +107,8 @@ export function initTvNavigation() {
   if (typeof window === "undefined") return () => {};
 
   function handleKeyDown(e) {
+    if (window.__TV_NAV_PAUSED__) return;
+
     const key = e.key;
     const keyCode = e.keyCode;
 
@@ -133,7 +135,7 @@ export function initTvNavigation() {
         if (first) {
           e.preventDefault();
           first.focus();
-          first.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+          first.scrollIntoView({ behavior: "auto", block: "nearest", inline: "nearest" });
         }
         return;
       }
@@ -142,17 +144,17 @@ export function initTvNavigation() {
       if (next) {
         e.preventDefault();
         next.focus();
-        next.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+        next.scrollIntoView({ behavior: "auto", block: "nearest", inline: "nearest" });
 
         // If inside a scroll row, ensure row scrolls to show focused item
-        const scrollParent = next.closest(".movie-row, .cast-scroll-row, .continue-watching-row");
+        const scrollParent = next.closest(".movie-row, .cast-scroll-row, .continue-watching-row, .tv-rail-row, .tv-episodes-row");
         if (scrollParent) {
           const nextRect = next.getBoundingClientRect();
           const parentRect = scrollParent.getBoundingClientRect();
           if (nextRect.left < parentRect.left) {
-            scrollParent.scrollBy({ left: nextRect.left - parentRect.left - 40, behavior: "smooth" });
+            scrollParent.scrollLeft += nextRect.left - parentRect.left - 32;
           } else if (nextRect.right > parentRect.right) {
-            scrollParent.scrollBy({ left: nextRect.right - parentRect.right + 40, behavior: "smooth" });
+            scrollParent.scrollLeft += nextRect.right - parentRect.right + 32;
           }
         }
       }
