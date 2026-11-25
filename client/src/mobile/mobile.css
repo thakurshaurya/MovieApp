@@ -1,0 +1,443 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
+
+:root {
+  --m-bg: #070b12;
+  --m-surface: #0f1522;
+  --m-card: #151c2c;
+  --m-accent: #00e5ff;
+  --m-text: #f8fafc;
+  --m-muted: #94a3b8;
+  --m-border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background: var(--m-bg);
+  color: var(--m-text);
+  font-family: "Manrope", system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.m-shell {
+  min-height: 100vh;
+  padding-bottom: calc(74px + env(safe-area-inset-bottom, 0px));
+  background: var(--m-bg);
+}
+
+/* Top Floating App Bar */
+.m-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, rgba(7, 11, 18, 0.94) 0%, rgba(7, 11, 18, 0.65) 70%, transparent 100%);
+}
+
+.m-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.m-brand-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--m-accent), #0284c7);
+  color: #041018;
+  font-weight: 800;
+  font-size: 16px;
+  display: grid;
+  place-items: center;
+}
+
+.m-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.m-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+}
+
+/* Category Pills Row */
+.m-cat-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: calc(58px + env(safe-area-inset-top, 0px)) 16px 12px;
+}
+
+.m-cat-pill {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.m-cat-pill.active {
+  background: #ffffff;
+  color: #070b12;
+  border-color: #ffffff;
+}
+
+/* Netflix Mobile Featured Hero Card */
+.m-hero-wrap {
+  padding: 4px 16px 20px;
+}
+
+.m-hero-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4.1;
+  max-height: 500px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: var(--m-card);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background-size: cover;
+  background-position: center 20%;
+}
+
+.m-hero-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(7, 11, 18, 0.98) 0%, rgba(7, 11, 18, 0.65) 38%, transparent 70%);
+}
+
+.m-hero-body {
+  position: relative;
+  z-index: 2;
+  padding: 18px 16px 16px;
+  text-align: center;
+}
+
+.m-hero-title {
+  margin: 0 0 6px;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.m-hero-meta {
+  font-size: 12px;
+  color: #cbd5e1;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+
+.m-hero-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.m-btn-play {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #ffffff;
+  color: #070b12;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.m-btn-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* Horizontal Rails */
+.m-rail {
+  margin-bottom: 22px;
+}
+
+.m-rail-title {
+  font-size: 17px;
+  font-weight: 800;
+  margin: 0 0 10px;
+  padding: 0 16px;
+}
+
+.m-rail-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 0 16px 6px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.m-rail-row::-webkit-scrollbar {
+  display: none;
+}
+
+.m-card {
+  flex: 0 0 118px;
+  width: 118px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--m-card);
+  display: flex;
+  flex-direction: column;
+}
+
+.m-card-wide {
+  flex: 0 0 190px;
+  width: 190px;
+}
+
+.m-card-img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  display: block;
+  background: #0f1522;
+}
+
+.m-card-wide .m-card-img {
+  aspect-ratio: 16 / 9;
+}
+
+.m-progress-bar {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.m-progress-fill {
+  height: 100%;
+  background: var(--m-accent);
+}
+
+.m-card-title {
+  padding: 6px 8px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Grid Pages */
+.m-page {
+  padding: calc(64px + env(safe-area-inset-top, 0px)) 16px 24px;
+}
+
+.m-page-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0 0 14px;
+}
+
+.m-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.m-grid .m-card {
+  width: 100%;
+  flex: none;
+}
+
+/* Search */
+.m-search-box {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--m-surface);
+  border: 1px solid var(--m-border);
+  color: #ffffff;
+  font-size: 15px;
+  margin-bottom: 16px;
+}
+
+/* Detail Page */
+.m-detail-backdrop {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: flex-start;
+  padding: calc(14px + env(safe-area-inset-top, 0px)) 14px;
+}
+
+.m-detail-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, var(--m-bg) 0%, transparent 60%);
+}
+
+.m-detail-body {
+  padding: 6px 16px 28px;
+}
+
+.m-detail-overview {
+  font-size: 14px;
+  line-height: 1.55;
+  color: #cbd5e1;
+  margin: 12px 0 18px;
+}
+
+.m-ep-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: var(--m-surface);
+  border-radius: 10px;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid var(--m-border);
+  width: 100%;
+  text-align: left;
+  color: inherit;
+}
+
+.m-ep-thumb {
+  width: 112px;
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #0b101b;
+}
+
+/* Player */
+.m-player-page {
+  min-height: 100vh;
+  background: #000000;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.m-player-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #070b12;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.m-player-frame {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: none;
+  background: #000;
+  display: block;
+}
+
+/* Bottom Navigation */
+.m-bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  background: rgba(7, 11, 18, 0.96);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px));
+}
+
+.m-bottom-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--m-muted);
+}
+
+.m-bottom-item.active {
+  color: #ffffff;
+}
+
+.m-loading {
+  display: grid;
+  place-items: center;
+  min-height: 55vh;
+  color: var(--m-muted);
+  font-size: 15px;
+}
+
+.m-auth-box {
+  background: var(--m-surface);
+  border: 1px solid var(--m-border);
+  border-radius: 14px;
+  padding: 22px;
+  margin-top: 20px;
+}
+
+.m-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #070b12;
+  border: 1px solid var(--m-border);
+  color: #fff;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
