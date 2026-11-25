@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Capacitor } from "@capacitor/core";
+import { StatusBar } from "@capacitor/status-bar";
 import { ArrowLeft, Server, Sliders } from "lucide-react";
 import api from "../api";
 import { buildVidoraUrl, getSavedVidoraSettings, saveVidoraSettings } from "../utils/vidora";
@@ -29,9 +31,15 @@ export default function MobilePlayer() {
     if (window.AntarcticPhoneBridge?.setWatchMode) {
       window.AntarcticPhoneBridge.setWatchMode(true);
     }
+    if (Capacitor.isNativePlatform()) {
+      StatusBar.hide().catch(() => {});
+    }
     return () => {
       if (window.AntarcticPhoneBridge?.setWatchMode) {
         window.AntarcticPhoneBridge.setWatchMode(false);
+      }
+      if (Capacitor.isNativePlatform()) {
+        StatusBar.show().catch(() => {});
       }
     };
   }, []);

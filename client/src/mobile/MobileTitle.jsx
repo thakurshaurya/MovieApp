@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Play, Plus, Check } from "lucide-react";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
@@ -126,6 +126,33 @@ export default function MobileTitle() {
 
         <p className="m-detail-overview">{item.overview}</p>
 
+        {item.credits?.cast?.length > 0 && (
+          <div style={{ marginBottom: 22 }}>
+            <h2 style={{ fontSize: 17, fontWeight: 800, margin: "0 0 10px" }}>Cast</h2>
+            <div className="m-rail-row" style={{ paddingLeft: 0, paddingRight: 0 }}>
+              {item.credits.cast.slice(0, 18).map((actor) => (
+                <div key={actor.id} style={{ flex: "0 0 84px", width: 84, textAlign: "center" }}>
+                  {actor.profile_path ? (
+                    <img
+                      src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
+                      alt={actor.name}
+                      style={{ width: 68, height: 68, borderRadius: "50%", objectFit: "cover", marginBottom: 6 }}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div style={{ width: 68, height: 68, borderRadius: "50%", background: "#151c2c", display: "grid", placeItems: "center", margin: "0 auto 6px", fontWeight: 700 }}>
+                      {actor.name?.slice(0, 1) || "A"}
+                    </div>
+                  )}
+                  <div style={{ fontSize: 11, fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {actor.name}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {type === "tv" && validSeasons.length > 0 && (
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
@@ -165,6 +192,28 @@ export default function MobileTitle() {
                 </div>
               </button>
             ))}
+          </div>
+        )}
+
+        {item.recommendations?.length > 0 && (
+          <div style={{ marginTop: 22 }}>
+            <h2 style={{ fontSize: 17, fontWeight: 800, margin: "0 0 10px" }}>More Like This</h2>
+            <div className="m-rail-row" style={{ paddingLeft: 0, paddingRight: 0 }}>
+              {item.recommendations.slice(0, 15).map((rec) => {
+                const recType = rec.media_type || (rec.first_air_date ? "tv" : "movie");
+                const recLabel = rec.title || rec.name;
+                return (
+                  <Link key={`${recType}-${rec.id}`} to={`/title/${recType}/${rec.id}`} className="m-card">
+                    {rec.poster_path ? (
+                      <img src={`https://image.tmdb.org/t/p/w342${rec.poster_path}`} alt={recLabel} className="m-card-img" loading="lazy" />
+                    ) : (
+                      <div className="m-card-img" style={{ display: "grid", placeItems: "center", fontSize: 10 }}>ANTARCTIC</div>
+                    )}
+                    <div className="m-card-title">{recLabel}</div>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>

@@ -75,6 +75,7 @@ export default function TvHome() {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [history, setHistory] = useState([]);
+  const [aiRecs, setAiRecs] = useState([]);
   const [spotlight, setSpotlight] = useState(null);
   const [error, setError] = useState("");
   const spotlightTimerRef = useRef(null);
@@ -98,6 +99,12 @@ export default function TvHome() {
       .catch(() => {
         if (mounted) setError("Could not load Antarctic catalogue. Check your internet connection.");
       });
+
+    api.get("/movies/recommendations/ai")
+      .then((res) => {
+        if (mounted) setAiRecs(res.data?.recommendations || []);
+      })
+      .catch(() => {});
 
     if (user) {
       api.get("/history?limit=12")
@@ -175,6 +182,9 @@ export default function TvHome() {
       <div className="tv-rails-wrap">
         {history.length > 0 && (
           <TvRail title="Continue Watching" items={history} onFocusItem={handleFocusItem} isWide />
+        )}
+        {aiRecs.length > 0 && (
+          <TvRail title="Recommended For You" items={aiRecs} onFocusItem={handleFocusItem} />
         )}
         <TvRail title="Trending Now" items={data.trending} onFocusItem={handleFocusItem} />
         <TvRail title="Popular Movies" items={data.popularMovies} onFocusItem={handleFocusItem} />

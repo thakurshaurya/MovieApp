@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Play, BookmarkPlus, BookmarkCheck, ArrowLeft, Star } from "lucide-react";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
@@ -202,6 +202,57 @@ export default function TvTitle() {
                 </div>
               </button>
             ))}
+          </div>
+        </section>
+      )}
+
+      {item.credits?.cast?.length > 0 && (
+        <section className="tv-detail-section">
+          <h2 className="tv-rail-title">Cast</h2>
+          <div className="tv-rail-row" style={{ paddingLeft: 0 }}>
+            {item.credits.cast.slice(0, 14).map((actor) => (
+              <div key={actor.id} style={{ flex: "0 0 110px", textAlign: "center" }}>
+                {actor.profile_path ? (
+                  <img
+                    src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
+                    alt={actor.name}
+                    style={{ width: 84, height: 84, borderRadius: "50%", objectFit: "cover", marginBottom: 8 }}
+                    loading="lazy"
+                  />
+                ) : (
+                  <div style={{ width: 84, height: 84, borderRadius: "50%", background: "#121723", display: "grid", placeItems: "center", margin: "0 auto 8px", fontWeight: 700 }}>
+                    {actor.name?.slice(0, 1) || "A"}
+                  </div>
+                )}
+                <div style={{ fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {actor.name}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {item.recommendations?.length > 0 && (
+        <section className="tv-detail-section">
+          <h2 className="tv-rail-title">More Like This</h2>
+          <div className="tv-rail-row" style={{ paddingLeft: 0 }}>
+            {item.recommendations.slice(0, 14).map((rec) => {
+              const recType = rec.media_type || (rec.first_air_date ? "tv" : "movie");
+              const recLabel = rec.title || rec.name;
+              return (
+                <Link key={`${recType}-${rec.id}`} to={`/title/${recType}/${rec.id}`} className="tv-card tv-focusable">
+                  {rec.poster_path ? (
+                    <img src={`https://image.tmdb.org/t/p/w185${rec.poster_path}`} alt={recLabel} className="tv-card-poster" loading="lazy" />
+                  ) : (
+                    <div className="tv-card-poster" style={{ display: "grid", placeItems: "center", fontSize: 12 }}>ANTARCTIC</div>
+                  )}
+                  <div className="tv-card-info">
+                    <h3 className="tv-card-title">{recLabel}</h3>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </section>
       )}

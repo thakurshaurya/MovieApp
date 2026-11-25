@@ -53,6 +53,7 @@ export default function MobileHome() {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [history, setHistory] = useState([]);
+  const [aiRecs, setAiRecs] = useState([]);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
@@ -60,6 +61,12 @@ export default function MobileHome() {
     api.get("/movies/home")
       .then((res) => {
         if (mounted) setData(res.data);
+      })
+      .catch(() => {});
+
+    api.get("/movies/recommendations/ai")
+      .then((res) => {
+        if (mounted) setAiRecs(res.data?.recommendations || []);
       })
       .catch(() => {});
 
@@ -148,6 +155,7 @@ export default function MobileHome() {
       )}
 
       {history.length > 0 && <MobileRail title="Continue Watching" items={history} isWide />}
+      {aiRecs.length > 0 && <MobileRail title="Recommended For You" items={aiRecs} />}
       <MobileRail title="Trending Now" items={data.trending} />
       <MobileRail title="Popular Movies" items={data.popularMovies} />
       <MobileRail title="Popular TV Series" items={data.popularTv} />
