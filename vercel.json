@@ -8,10 +8,24 @@
     "server": {
       "root": "server",
       "framework": "express",
-      "entrypoint": "src/server.js"
+      "entrypoint": "src/server.js",
+      "bindings": [
+        {
+          "type": "service",
+          "service": "client",
+          "format": "url",
+          "env": "CLIENT_URL"
+        }
+      ]
     }
   },
   "rewrites": [
+    {
+      "source": "/",
+      "destination": {
+        "service": "server"
+      }
+    },
     {
       "source": "/api/(.*)",
       "destination": {

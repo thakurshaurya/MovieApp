@@ -37,37 +37,43 @@ async function tmdb(path) {
   return data;
 }
 
+export async function fetchHomeData() {
+  const [
+    trending,
+    popularMovies,
+    popularTv,
+    topRated,
+    newHindi,
+    trendingHindi,
+    classicHindi,
+    indianSeries
+  ] = await Promise.all([
+    tmdb("/trending/all/week"),
+    tmdb("/movie/popular"),
+    tmdb("/tv/popular"),
+    tmdb("/movie/top_rated"),
+    tmdb("/discover/movie?with_original_language=hi&sort_by=primary_release_date.desc&vote_count.gte=3"),
+    tmdb("/discover/movie?with_original_language=hi&sort_by=popularity.desc"),
+    tmdb("/discover/movie?with_original_language=hi&sort_by=vote_average.desc&vote_count.gte=80"),
+    tmdb("/discover/tv?with_original_language=hi&sort_by=vote_count.desc")
+  ]);
+
+  return {
+    trending: trending.results || [],
+    popularMovies: popularMovies.results || [],
+    popularTv: popularTv.results || [],
+    topRated: topRated.results || [],
+    newHindi: (newHindi.results || []).map((x) => ({ ...x, media_type: "movie" })),
+    trendingHindi: (trendingHindi.results || []).map((x) => ({ ...x, media_type: "movie" })),
+    classicHindi: (classicHindi.results || []).map((x) => ({ ...x, media_type: "movie" })),
+    indianSeries: (indianSeries.results || []).map((x) => ({ ...x, media_type: "tv" }))
+  };
+}
+
 export async function getHome(req, res) {
   try {
-    const [
-      trending,
-      popularMovies,
-      popularTv,
-      topRated,
-      newHindi,
-      trendingHindi,
-      classicHindi,
-      indianSeries
-    ] = await Promise.all([
-      tmdb("/trending/all/week"),
-      tmdb("/movie/popular"),
-      tmdb("/tv/popular"),
-      tmdb("/movie/top_rated"),
-      tmdb("/discover/movie?with_original_language=hi&sort_by=primary_release_date.desc&vote_count.gte=3"),
-      tmdb("/discover/movie?with_original_language=hi&sort_by=popularity.desc"),
-      tmdb("/discover/movie?with_original_language=hi&sort_by=vote_average.desc&vote_count.gte=80"),
-      tmdb("/discover/tv?with_original_language=hi&sort_by=vote_count.desc")
-    ]);
-    res.json({
-      trending: trending.results || [],
-      popularMovies: popularMovies.results || [],
-      popularTv: popularTv.results || [],
-      topRated: topRated.results || [],
-      newHindi: (newHindi.results || []).map((x) => ({ ...x, media_type: "movie" })),
-      trendingHindi: (trendingHindi.results || []).map((x) => ({ ...x, media_type: "movie" })),
-      classicHindi: (classicHindi.results || []).map((x) => ({ ...x, media_type: "movie" })),
-      indianSeries: (indianSeries.results || []).map((x) => ({ ...x, media_type: "tv" }))
-    });
+    const data = await fetchHomeData();
+    res.json(data);
   } catch (error) {
     console.error("getHome error:", error);
     res.status(502).json({ message: error.message || "Unable to load catalogue." });
