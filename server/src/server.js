@@ -6,7 +6,6 @@ import authRoutes from "./routes/auth.routes.js";
 import movieRoutes from "./routes/movie.routes.js";
 import watchlistRoutes from "./routes/watchlist.routes.js";
 import historyRoutes from "./routes/history.routes.js";
-import { renderHomePage } from "./controllers/ssr.controller.js";
 
 dotenv.config();
 const app = express();
@@ -99,9 +98,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/movies", movieRoutes);
 app.use("/api/watchlist", watchlistRoutes);
 app.use("/api/history", historyRoutes);
-
-// Server-side render the Home page for fast first paint
-app.get("/", renderHomePage);
 
 const PORT = process.env.PORT || 5001;
 

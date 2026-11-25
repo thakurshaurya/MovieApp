@@ -11,12 +11,7 @@ const TOTAL_HERO_SLIDES = 7;
 const ROTATION_INTERVAL_MS = 6000; // 6s per slide
 
 export default function Home() {
-  const [data, setData] = useState(() => {
-    if (typeof window !== "undefined" && window.__INITIAL_HOME_DATA__) {
-      return window.__INITIAL_HOME_DATA__;
-    }
-    return null;
-  });
+  const [data, setData] = useState(null);
   const [error, setError] = useState("");
   const [recentHistory, setRecentHistory] = useState([]);
   const [userWatchlist, setUserWatchlist] = useState([]);
@@ -79,20 +74,16 @@ export default function Home() {
   useEffect(() => {
     let isMounted = true;
 
-    // Only fetch catalogue if not already server-side rendered
-    if (typeof window !== "undefined" && window.__INITIAL_HOME_DATA__) {
-      delete window.__INITIAL_HOME_DATA__;
-    } else {
-      api.get("/movies/home")
-        .then((r) => {
-          if (isMounted) setData(r.data);
-        })
-        .catch(() => {
-          if (isMounted) {
-            setError("Could not load titles. Check server and TMDB configuration.");
-          }
-        });
-    }
+    // Fetch catalogue
+    api.get("/movies/home")
+      .then((r) => {
+        if (isMounted) setData(r.data);
+      })
+      .catch(() => {
+        if (isMounted) {
+          setError("Could not load titles. Check server and TMDB configuration.");
+        }
+      });
 
     // If user is logged in, fetch history and watchlist
     if (user) {

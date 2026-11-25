@@ -26,6 +26,17 @@ export default function MobilePlayer() {
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
 
   useEffect(() => {
+    if (window.AntarcticPhoneBridge?.setWatchMode) {
+      window.AntarcticPhoneBridge.setWatchMode(true);
+    }
+    return () => {
+      if (window.AntarcticPhoneBridge?.setWatchMode) {
+        window.AntarcticPhoneBridge.setWatchMode(false);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     api.get(`/movies/${type}/${id}`)
       .then((res) => setTitle(res.data?.title || res.data?.name || ""))
       .catch(() => {});
