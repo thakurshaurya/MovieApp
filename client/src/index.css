@@ -4426,4 +4426,87 @@ button {
   background: rgba(0, 229, 255, 0.25);
 }
 
+/* ==============================================================
+   ANDROID TV & REMOTE D-PAD SPATIAL NAVIGATION STYLES
+   ============================================================== */
+
+/* Clear, high-contrast TV focus state across all interactive elements */
+:focus-visible,
+[data-tv-focused="true"] {
+  outline: 3px solid var(--gold-primary) !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.7), inset 0 0 10px rgba(0, 229, 255, 0.2) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, outline 0.2s ease !important;
+  transform: scale(1.06) !important;
+  z-index: 100 !important;
+}
+
+/* Movie Card TV focus effect */
+.movie-card:focus-visible,
+.continue-watching-card:focus-visible,
+.cast-card:focus-visible,
+.episode-card:focus-visible {
+  outline: 3px solid var(--gold-primary) !important;
+  outline-offset: 4px !important;
+  transform: scale(1.08) !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 229, 255, 0.8) !important;
+}
+
+.movie-card:focus-visible .poster-wrap img,
+.continue-watching-card:focus-visible img {
+  border-color: var(--gold-primary);
+}
+
+.movie-card:focus-visible .card-play {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Hero Button TV Focus */
+.hero-actions a:focus-visible,
+.hero-actions button:focus-visible,
+.primary-button:focus-visible,
+.secondary-button:focus-visible {
+  outline: 3px solid #ffffff !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.9) !important;
+  transform: scale(1.08) !important;
+}
+
+/* Navigation items TV focus */
+.nav-link:focus-visible,
+.header-actions a:focus-visible,
+.header-actions button:focus-visible {
+  outline: 2px solid var(--gold-primary) !important;
+  outline-offset: 2px !important;
+  background: rgba(0, 229, 255, 0.15) !important;
+  border-radius: 6px !important;
+}
+
+/* Player Customizer & Modal controls TV focus */
+.modal-close:focus-visible,
+.actor-modal-close:focus-visible,
+.customizer-dialog button:focus-visible {
+  outline: 3px solid var(--gold-primary) !important;
+  transform: scale(1.1) !important;
+}
+
+/* TV screen media adjustments */
+@media (min-width: 1200px) and (hover: none), (min-width: 1600px) {
+  body {
+    font-size: 17px;
+  }
+  .movie-row {
+    grid-auto-columns: 200px;
+    gap: 22px;
+  }
+  .hero {
+    min-height: 65vh;
+  }
+  .hero-content h1 {
+    font-size: 54px;
+  }
+}
+
+
 

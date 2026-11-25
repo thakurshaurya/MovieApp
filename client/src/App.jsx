@@ -6,6 +6,7 @@ import { StatusBar, Style } from "@capacitor/status-bar";
 import Header from "./components/Header";
 import MobileBottomNav from "./components/MobileBottomNav";
 import { useAuth } from "./context/AuthContext";
+import { initTvNavigation } from "./utils/tvNav";
 
 // Lazy-load pages for optimal bundle splitting and performance
 const Home = lazy(() => import("./pages/Home"));
@@ -56,6 +57,12 @@ function Footer() {
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Initialize Android TV Remote / D-Pad spatial navigation
+  useEffect(() => {
+    const cleanup = initTvNavigation();
+    return cleanup;
+  }, []);
 
   // Native Android Status Bar & Back Button Integration
   useEffect(() => {

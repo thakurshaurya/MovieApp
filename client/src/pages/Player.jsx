@@ -272,6 +272,7 @@ export default function Player() {
           src={embedUrl}
           title={isTv ? "Vidora TV episode player" : "Vidora movie player"}
           className="embedded-player"
+          sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
           allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
           allowFullScreen
           referrerPolicy="strict-origin-when-cross-origin"
