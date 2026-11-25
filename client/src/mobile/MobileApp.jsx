@@ -12,6 +12,7 @@ import MobilePlayer from "./MobilePlayer";
 import MobileWatchlist from "./MobileWatchlist";
 import MobileAuth from "./MobileAuth";
 import MobileProfile from "./MobileProfile";
+import MobileBollywood from "./MobileBollywood";
 
 export default function MobileApp() {
   const { user } = useAuth();
@@ -57,6 +58,7 @@ export default function MobileApp() {
         <Route path="/" element={<MobileHome />} />
         <Route path="/movies" element={<MobileExplore mediaType="movie" />} />
         <Route path="/tvshows" element={<MobileExplore mediaType="tv" />} />
+        <Route path="/bollywood" element={<MobileBollywood />} />
         <Route path="/search" element={<MobileSearch />} />
         <Route path="/watchlist" element={<MobileWatchlist />} />
         <Route path="/title/:type/:id" element={<MobileTitle />} />

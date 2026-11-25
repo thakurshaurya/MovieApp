@@ -18,6 +18,7 @@ const Watchlist = lazy(() => import("./pages/Watchlist"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Player = lazy(() => import("./pages/Player"));
 const Download = lazy(() => import("./pages/Download"));
+const Bollywood = lazy(() => import("./pages/Bollywood"));
 
 function Protected({ children }) {
   const { user, loading } = useAuth();
@@ -102,6 +103,7 @@ export default function App() {
           <Route path="/login" element={<Auth mode="login" />} />
           <Route path="/register" element={<Auth mode="register" />} />
           <Route path="/download" element={<Download />} />
+          <Route path="/bollywood" element={<Bollywood />} />
           <Route
             path="/watchlist"
             element={

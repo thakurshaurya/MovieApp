@@ -145,6 +145,23 @@ export default function TvPlayer() {
     }
   }, [id, type, season, episode, params]);
 
+  // Immediately record to Continue Watching when playback starts
+  useEffect(() => {
+    if (user && titleDetails) {
+      api.post("/history", {
+        tmdbId: Number(id),
+        mediaType: type,
+        title: titleDetails.title || titleDetails.name,
+        posterPath: titleDetails.poster_path,
+        backdropPath: titleDetails.backdrop_path,
+        season: isTv ? season : undefined,
+        episode: isTv ? episode : undefined,
+        currentTime: Math.max(1, Math.floor(resumeSeconds || 1)),
+        duration: 0
+      }).catch(() => {});
+    }
+  }, [user, titleDetails, id, type, isTv, season, episode, resumeSeconds]);
+
   const syncProgress = useCallback(
     (currentTime, duration) => {
       if (!user || !titleDetails || currentTime <= 0) return;

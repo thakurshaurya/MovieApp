@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Capacitor } from "@capacitor/core";
 import { StatusBar } from "@capacitor/status-bar";
 import { ArrowLeft, Server, Sliders } from "lucide-react";
 import api from "../api";
-import { buildVidoraUrl, getSavedVidoraSettings, saveVidoraSettings } from "../utils/vidora";
+import { useAuth } from "../context/AuthContext";
+import { buildVidoraUrl, getSavedVidoraSettings, saveVidoraSettings, VIDORA_ORIGIN } from "../utils/vidora";
 import PlayerCustomizerModal from "../components/PlayerCustomizerModal";
 
 const SERVERS = [
@@ -22,10 +23,13 @@ export default function MobilePlayer() {
   const episode = Math.max(1, Number(params.get("episode") || 1));
   const startAt = Number(params.get("startAt") || 0);
 
+  const { user } = useAuth();
   const [activeServer, setActiveServer] = useState("vidora");
-  const [title, setTitle] = useState("");
+  const [titleDetails, setTitleDetails] = useState(null);
   const [customSettings, setCustomSettings] = useState(getSavedVidoraSettings);
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
+  const lastSyncRef = useRef(0);
+  const currentPlaybackRef = useRef({ currentTime: 0, duration: 0 });
 
   useEffect(() => {
     if (window.AntarcticPhoneBridge?.setWatchMode) {
@@ -46,9 +50,64 @@ export default function MobilePlayer() {
 
   useEffect(() => {
     api.get(`/movies/${type}/${id}`)
-      .then((res) => setTitle(res.data?.title || res.data?.name || ""))
+      .then((res) => setTitleDetails(res.data || null))
       .catch(() => {});
   }, [type, id]);
+
+  const syncProgress = useCallback(
+    (currentTime, duration) => {
+      if (!user || !titleDetails) return;
+      api.post("/history", {
+        tmdbId: Number(id),
+        mediaType: type,
+        title: titleDetails.title || titleDetails.name,
+        posterPath: titleDetails.poster_path,
+        backdropPath: titleDetails.backdrop_path,
+        season: isTv ? season : undefined,
+        episode: isTv ? episode : undefined,
+        currentTime: Math.max(1, Math.floor(currentTime || 1)),
+        duration: Math.floor(duration || 0)
+      }).catch(() => {});
+    },
+    [user, titleDetails, id, type, isTv, season, episode]
+  );
+
+  // Immediately record to Continue Watching when playback starts
+  useEffect(() => {
+    if (user && titleDetails) {
+      syncProgress(startAt > 0 ? startAt : 1, 0);
+    }
+  }, [user, titleDetails, startAt, syncProgress]);
+
+  useEffect(() => {
+    function handleMessage(event) {
+      if (event.origin !== VIDORA_ORIGIN) return;
+      let payload = event.data;
+      if (typeof payload === "string") {
+        try {
+          payload = JSON.parse(payload);
+        } catch {
+          return;
+        }
+      }
+      if (payload?.type === "PLAYER_EVENT" && payload.data) {
+        const { event: eventType, currentTime, duration } = payload.data;
+        currentPlaybackRef.current = { currentTime: currentTime || 0, duration: duration || 0 };
+        const now = Date.now();
+        if ((eventType === "timeupdate" && now - lastSyncRef.current >= 15000) || eventType === "pause" || eventType === "ended") {
+          lastSyncRef.current = now;
+          syncProgress(currentTime, duration);
+        }
+      }
+    }
+    window.addEventListener("message", handleMessage);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+      if (currentPlaybackRef.current.currentTime > 0) {
+        syncProgress(currentPlaybackRef.current.currentTime, currentPlaybackRef.current.duration);
+      }
+    };
+  }, [syncProgress]);
 
   const embedUrl = useMemo(() => {
     if (activeServer === "vidsrc_cc") {
@@ -81,7 +140,7 @@ export default function MobilePlayer() {
           <ArrowLeft size={18} />
         </button>
         <div style={{ flex: 1, minWidth: 0, fontSize: 14, fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-          {title || "Now Playing"} {isTv ? `· S${season} E${episode}` : ""}
+          {titleDetails?.title || titleDetails?.name || "Now Playing"} {isTv ? `· S${season} E${episode}` : ""}
         </div>
         <button type="button" className="m-cat-pill" style={{ display: "inline-flex", alignItems: "center", gap: 6 }} onClick={cycleServer}>
           <Server size={14} /> {serverLabel}

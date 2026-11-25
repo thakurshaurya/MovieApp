@@ -11,6 +11,7 @@ import TvTitle from "./TvTitle";
 import TvPlayer from "./TvPlayer";
 import TvAuth from "./TvAuth";
 import TvProfile from "./TvProfile";
+import TvBollywood from "./TvBollywood";
 import { initTvNavigation } from "../utils/tvNav";
 
 export default function TvApp() {
@@ -45,6 +46,7 @@ export default function TvApp() {
           <Route path="/" element={<TvHome />} />
           <Route path="/movies" element={<TvExplore mediaType="movie" />} />
           <Route path="/tvshows" element={<TvExplore mediaType="tv" />} />
+          <Route path="/bollywood" element={<TvBollywood />} />
           <Route path="/search" element={<TvSearch />} />
           <Route path="/watchlist" element={<TvWatchlist />} />
           <Route path="/title/:type/:id" element={<TvTitle />} />

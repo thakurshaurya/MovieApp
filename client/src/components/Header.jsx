@@ -149,6 +149,9 @@ export default function Header() {
               <Download size={16} className="nav-icon" />
               <span>Get App</span>
             </NavLink>
+            <NavLink to="/bollywood" className={({ isActive }) => (isActive ? "active" : "")}>
+              <span>Bollywood</span>
+            </NavLink>
             <NavLink
               to="/movies"
               className={isMoviesActive ? "active" : ""}

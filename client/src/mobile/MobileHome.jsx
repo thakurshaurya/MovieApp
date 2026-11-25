@@ -121,6 +121,7 @@ export default function MobileHome() {
       <div className="m-cat-pills">
         <Link to="/tvshows" className="m-cat-pill">TV Shows</Link>
         <Link to="/movies" className="m-cat-pill">Movies</Link>
+        <Link to="/bollywood" className="m-cat-pill">Bollywood</Link>
         <Link to="/watchlist" className="m-cat-pill">My List</Link>
       </div>
 

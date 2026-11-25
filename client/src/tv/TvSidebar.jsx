@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Home, Search, Film, Tv, Bookmark, UserRound } from "lucide-react";
+import { Home, Search, Film, Tv, Bookmark, UserRound, Sparkles } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export default function TvSidebar() {
@@ -31,6 +31,11 @@ export default function TvSidebar() {
         <NavLink to="/tvshows" className={({ isActive }) => `tv-nav-item ${isActive ? "active" : ""}`}>
           <Tv size={22} />
           <span className="tv-nav-label">TV Shows</span>
+        </NavLink>
+
+        <NavLink to="/bollywood" className={({ isActive }) => `tv-nav-item ${isActive ? "active" : ""}`}>
+          <Sparkles size={22} />
+          <span className="tv-nav-label">Bollywood</span>
         </NavLink>
 
         <NavLink to="/watchlist" className={({ isActive }) => `tv-nav-item ${isActive ? "active" : ""}`}>
