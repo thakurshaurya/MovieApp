@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Capacitor } from "@capacitor/core";
 
-const PRODUCTION_API_URL = "https://movieapp-six-lovat.vercel.app/api";
+const PRODUCTION_API_URL = "https://movieapp-iota-flame.vercel.app/api";
 
 function resolveApiBaseUrl() {
   // 1. Capacitor Native Mobile App (Android / iOS):

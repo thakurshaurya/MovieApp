@@ -5,6 +5,7 @@ import { App as CapApp } from "@capacitor/app";
 import { StatusBar, Style } from "@capacitor/status-bar";
 import Header from "./components/Header";
 import MobileBottomNav from "./components/MobileBottomNav";
+import WelcomeSplash from "./components/WelcomeSplash";
 import { useAuth } from "./context/AuthContext";
 import { initTvNavigation } from "./utils/tvNav";
 
@@ -90,6 +91,7 @@ export default function App() {
 
   return (
     <>
+      <WelcomeSplash />
       <Header />
       <Suspense fallback={<PageLoader />}>
         <Routes>

@@ -13,6 +13,7 @@ import MobileWatchlist from "./MobileWatchlist";
 import MobileAuth from "./MobileAuth";
 import MobileProfile from "./MobileProfile";
 import MobileBollywood from "./MobileBollywood";
+import WelcomeSplash from "../components/WelcomeSplash";
 
 export default function MobileApp() {
   const { user } = useAuth();
@@ -37,6 +38,7 @@ export default function MobileApp() {
 
   return (
     <div className={isWatching ? "" : "m-shell"}>
+      <WelcomeSplash />
       {!isWatching && !isDetail && (
         <header className="m-topbar">
           <Link to="/" className="m-brand">

@@ -12,6 +12,7 @@ import TvPlayer from "./TvPlayer";
 import TvAuth from "./TvAuth";
 import TvProfile from "./TvProfile";
 import TvBollywood from "./TvBollywood";
+import WelcomeSplash from "../components/WelcomeSplash";
 import { initTvNavigation } from "../utils/tvNav";
 
 export default function TvApp() {
@@ -40,6 +41,7 @@ export default function TvApp() {
 
   return (
     <div className="tv-shell">
+      <WelcomeSplash />
       {!isWatching && <TvSidebar />}
       <main className={isWatching ? "" : "tv-main"}>
         <Routes>
