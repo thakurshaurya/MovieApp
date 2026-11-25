@@ -1,116 +1,87 @@
-# Antarctic Streaming Platform
+# Antarctic
 
-A full-stack streaming platform with a frosty Antarctic aesthetic and cyan outlining. Use only video sources you own or are licensed to distribute.
+**Antarctic** is a full-stack streaming platform for movies and TV series, built with **React + Vite**, **Express + MongoDB**, and **Capacitor**—delivering three tailored experiences from one codebase:
 
-## Stack
-- Frontend: React, Vite, Tailwind CSS, React Router, Axios
-- Backend: Node.js, Express, MongoDB/Mongoose, JWT
-- Movie metadata: TMDB API
-
-## Requirements
-- Node.js 20+
-- MongoDB local instance or MongoDB Atlas account
-- TMDB API key (https://www.themoviedb.org/settings/api)
-
-## Setup
-
-### 1. Backend
-```bash
-cd server
-cp .env.example .env
-npm install
-npm run dev
-```
-Fill in `MONGO_URI`, `JWT_SECRET`, `TMDB_API_KEY`, and `GROQ_API_KEY` in `server/.env`.
-
-Get your free Groq API key at: https://console.groq.com/keys
-
-### 2. Frontend
-In a second terminal:
-```bash
-cd client
-cp .env.example .env
-npm install
-npm run dev
-```
-Open the Vite URL shown in the terminal (normally http://localhost:5173).
-
-## Current implementation
-- Dark streaming-style home page with responsive navigation
-- Hero feature, trending/popular/movie/TV rows
-- Search page
-- Movie/TV detail page
-- Register/login/logout
-- Authenticated watchlist endpoints and UI
-- TMDB metadata proxy in the backend
-- Groq AI-powered personalized movie & show recommendations based on watch history (powered by Llama 3.3)
-
-## Important
-TMDB provides metadata and images, not streaming rights or video files. The player page is a placeholder until you connect a legitimate source such as your own hosted videos or a licensed provider. Do not embed unauthorized streams.
-
-
-## Vidora Embed Playback Integration
-
-The platform embeds streaming video playback via the [Vidora API](https://vidora.ac/#customize).
-
-### Embed Endpoints
-- **Movies**: `https://vidora.ac/movie/{tmdbId}`
-- **TV Episodes**: `https://vidora.ac/tv/{tmdbId}/{season}/{episode}`
-- **Anime**: `https://vidora.ac/anime/{MALid}/{episode}/{subOrDub}?fallback=true`
-
-### Customization Parameters
-Append parameters to the URL query string:
-- `primaryColor`: Hex code without `#` (default: `00e5ff` Antarctic Cyan). Controls sliders, progress, and autoplay buttons.
-- `secondaryColor`: Hex code without `#` (default: `06090e`). Progress bar track backing color.
-- `iconColor`: Hex code without `#` (default: `f0fdfa`). Controls icon color.
-- `title`: `true` | `false`. Controls whether the media title overlay is shown.
-- `poster`: `true` | `false`. Determines whether the poster image is shown prior to playback.
-- `autoplay`: `true` | `false`. Auto starts playback.
-- `nextbutton`: `true` | `false`. Displays a "Next Episode" button once 90% of an episode is watched.
-- `startAt`: Number of seconds to resume playback from (powers Continue Watching).
-- `sub_file`: Direct URL to external WebVTT subtitle track.
-- `sub_label`: Label for the subtitle track (e.g. `English`).
-- `fallback_url`: Fallback destination if the stream cannot be loaded.
-
-### PostMessage & Real-Time Sync
-The player listens to `window.addEventListener('message', ...)` from `https://vidora.ac`:
-1. `MEDIA_DATA`: Automatically updates `localStorage` (`vidoraProgress`) with watch time and episode history.
-2. `PLAYER_EVENT`: Tracks `play`, `pause`, `seeked`, `timeupdate`, and `ended` events with `currentTime` and `duration`, syncing progress with the user's viewing history in the database.
+- **Web App** — Responsive cinematic web experience deployed on Vercel.
+- **Android Phone App (`antarctic.apk`)** — Netflix-style mobile interface with edge-to-edge notch support, auto-landscape fullscreen playback, and bottom tab navigation.
+- **Android TV App (`antarctic-tv.apk`)** — 10-foot Leanback TV interface with D-Pad spatial navigation, on-screen remote keyboard, Pointer Mode for iframe controls, and optimizations for 1 GB RAM TVs.
 
 ---
 
-## Android App (Capacitor Native)
+## Features
 
-The platform is fully packaged as a native Android app using **Capacitor**:
-- Package ID: `com.antarctic.streaming`
-- Native project location: `client/android/`
-- Hardware accelerated video playback & fullscreen stream compatibility.
-- Native Android back button routing and dark Antarctic Cyan status bar theming.
-- Network security configuration allowing cleartext HTTP traffic for local/LAN dev servers.
+- **Unified Catalogue & Discovery:** Trending, Popular Movies, Top Rated, TV Series, and a dedicated **Bollywood & Hindi** section (`/bollywood`) powered by TMDB.
+- **AI Recommendations:** Personalized recommendations ("Recommended For You") based on watch history.
+- **Multi-Server Playback:** Embedded streaming via Vidora (with customizable player colors, autoplay, and resume timestamps) plus quick server switching (`Vidora`, `VidSrc.cc`, `VidSrc.to`) and iframe `sandbox` pop-up protection.
+- **Cast & Filmography:** Interactive cast cards with photos and full performer filmography modals.
+- **Cross-Device Sync:** JWT authentication syncing **My List (Watchlist)** and **Continue Watching** history across Web, Phone, and TV.
+- **Native App Downloads:** Dedicated `/download` page on the website hosting both APKs.
 
-### Building & Running on Android
+---
 
-#### 1. Sync & Build Assets
+## Project Structure
+
+```text
+Antartic/
+├── client/
+│   ├── src/
+│   │   ├── pages/          # Desktop & responsive web pages (Home, Explore, Title, Player, Bollywood, Download)
+│   │   ├── mobile/         # Netflix-style Android Phone UI (VITE_APP_TARGET=mobile)
+│   │   ├── tv/             # 10-foot Android TV UI (VITE_APP_TARGET=tv)
+│   │   ├── components/     # Shared components (Header, MovieCard, CastModal, PlayerCustomizerModal)
+│   │   └── utils/          # Vidora embed builder & TV D-Pad spatial navigation
+│   ├── android/            # Capacitor Android Phone project (com.antarctic.streaming)
+│   └── android-tv/         # Capacitor Android TV project (com.antarctic.tv)
+├── server/
+│   └── src/
+│       ├── controllers/    # Auth, Movies/TMDB, Watchlist, History, AI Recommendations
+│       ├── models/         # Mongoose User & ViewingHistory schemas
+│       └── routes/         # Express API routes (/api/*)
+└── vercel.json             # Vercel multi-service configuration (client + server)
+```
+
+---
+
+## Local Development
+
+### 1. Server
+```bash
+cd server
+npm install
+npm run dev
+```
+Configure `server/.env` with `MONGO_URI`, `JWT_SECRET`, `TMDB_API_KEY`, and optionally `GROQ_API_KEY`.
+
+### 2. Web Client
 ```bash
 cd client
-npm run android:build
+npm install
+npm run dev
 ```
 
-#### 2. Open in Android Studio
-```bash
-npm run android:open
-```
-*Alternatively, launch Android Studio and open the folder `client/android`.*
+---
 
-#### 3. Run Directly on Connected Device / Emulator
-```bash
-npm run android:run
-```
+## Building the Android APKs
 
-#### 4. Build APK via Gradle CLI
-```bash
-cd client/android
-./gradlew assembleDebug
-```
-The compiled debug APK will be generated at:
-`client/android/app/build/outputs/apk/debug/app-debug.apk`
+> Ensure `client/public/downloads/` is not included during APK builds if you want minimal APK size.
+
+- **Android Phone APK (`antarctic.apk`):**
+  ```bash
+  cd client
+  VITE_APP_TARGET=mobile npm run build
+  npx cap sync android
+  cd android && ./gradlew assembleDebug
+  ```
+- **Android TV APK (`antarctic-tv.apk`):**
+  ```bash
+  cd client
+  VITE_APP_TARGET=tv npm run build
+  cp -R dist/* android-tv/app/src/main/assets/public/
+  cd android-tv && ./gradlew assembleDebug
+  ```
+
+---
+
+## Deployment
+
+Configured for **Vercel Services** in [vercel.json](vercel.json), routing `/api/*` to the Express `server` service and all other routes to the Vite `client` service.
