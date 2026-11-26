@@ -163,10 +163,6 @@ export default function Header() {
               <HomeIcon size={16} className="nav-icon" />
               <span>Home</span>
             </NavLink>
-            <NavLink to="/download" className={({ isActive }) => (isActive ? "active" : "")}>
-              <Download size={16} className="nav-icon" />
-              <span>Get App</span>
-            </NavLink>
             <NavLink to="/bollywood" className={({ isActive }) => (isActive ? "active" : "")}>
               <span>Bollywood</span>
             </NavLink>
@@ -190,6 +186,10 @@ export default function Header() {
                 <span>My Watchlist</span>
               </NavLink>
             )}
+            <NavLink to="/download" className={({ isActive }) => (isActive ? "active" : "")}>
+              <Download size={16} className="nav-icon" />
+              <span>Get App</span>
+            </NavLink>
           </nav>
 
           <div className="header-actions">
