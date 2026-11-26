@@ -81,8 +81,8 @@ export default function TvSearch() {
         </div>
       </div>
 
-      <div>
-        <h1 className="tv-page-title" style={{ marginBottom: 22 }}>
+      <div className="tv-search-results">
+        <h1 className="tv-page-title" style={{ marginBottom: 16, fontSize: 22 }}>
           {query.trim() ? `Results for "${query.trim()}"` : "Use the remote keyboard to search"}
         </h1>
         {loading ? (

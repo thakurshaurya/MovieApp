@@ -37,36 +37,45 @@ export default function TvPlayer() {
   const [hudVisible, setHudVisible] = useState(true);
   const [episodesOpen, setEpisodesOpen] = useState(false);
   const [pointerMode, setPointerMode] = useState(false);
+  const [cursorPos, setCursorPos] = useState({ x: 0.5, y: 0.5 });
 
   const hudTimerRef = useRef(null);
   const lastSyncRef = useRef(0);
   const currentPlaybackRef = useRef({ currentTime: 0, duration: 0 });
   const iframeRef = useRef(null);
+  const serverBtnRef = useRef(null);
 
-  const showHudTemporarily = useCallback(() => {
+  const showHudTemporarily = useCallback((focusServer = false) => {
     setHudVisible(true);
+    if (focusServer) {
+      setTimeout(() => serverBtnRef.current?.focus(), 60);
+    }
     if (hudTimerRef.current) clearTimeout(hudTimerRef.current);
     hudTimerRef.current = setTimeout(() => {
       if (!episodesOpen && !isCustomizerOpen) {
         setHudVisible(false);
       }
-    }, 5000);
+    }, 5500);
   }, [episodesOpen, isCustomizerOpen]);
 
   useEffect(() => {
-    showHudTemporarily();
+    showHudTemporarily(true);
     return () => {
       if (hudTimerRef.current) clearTimeout(hudTimerRef.current);
     };
   }, [showHudTemporarily]);
 
-  // Listen for native pointer mode exit event
+  // Expose native Android TV hooks so UP opens HUD & native pointer updates HTML cursor
   useEffect(() => {
+    window.__showTvHud = () => showHudTemporarily(true);
     window.__onTvPointerExit = () => setPointerMode(false);
+    window.__setTvCursor = (x, y) => setCursorPos({ x, y });
     return () => {
+      delete window.__showTvHud;
       delete window.__onTvPointerExit;
+      delete window.__setTvCursor;
     };
-  }, []);
+  }, [showHudTemporarily]);
 
   // Sync player/HUD/pointer state with native Android TV remote bridge & tvNav
   useEffect(() => {
@@ -75,6 +84,13 @@ export default function TvPlayer() {
     if (window.AntarcticTvBridge?.setPlayerState) {
       window.AntarcticTvBridge.setPlayerState(true, anyOverlayOpen);
     }
+    if (window.AntarcticTvBridge?.setPointerMode) {
+      window.AntarcticTvBridge.setPointerMode(pointerMode);
+    }
+  }, [hudVisible, episodesOpen, isCustomizerOpen, pointerMode]);
+
+  // Reset native bridge state only when leaving the player page
+  useEffect(() => {
     return () => {
       window.__TV_NAV_PAUSED__ = false;
       if (window.AntarcticTvBridge?.setPlayerState) {
@@ -84,21 +100,20 @@ export default function TvPlayer() {
         window.AntarcticTvBridge.setPointerMode(false);
       }
     };
-  }, [hudVisible, episodesOpen, isCustomizerOpen, pointerMode]);
+  }, []);
 
   // Listen for remote keys to toggle TV HUD overlay
   useEffect(() => {
     function onKeyDown(e) {
-      if (pointerMode) return;
       if (e.key === "ArrowUp" || e.key === "ContextMenu" || e.key === "Info" || e.keyCode === 82) {
-        showHudTemporarily();
+        showHudTemporarily(true);
       } else if (e.key === "ArrowDown" && hudVisible && !episodesOpen && !isCustomizerOpen) {
         setHudVisible(false);
       }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [showHudTemporarily, hudVisible, episodesOpen, isCustomizerOpen, pointerMode]);
+  }, [showHudTemporarily, hudVisible, episodesOpen, isCustomizerOpen]);
 
   useEffect(() => {
     const s = Math.max(1, Number(params.get("season") || 1));
@@ -238,7 +253,7 @@ export default function TvPlayer() {
     const idx = SERVERS.findIndex((s) => s.id === activeServer);
     const next = SERVERS[(idx + 1) % SERVERS.length];
     setActiveServer(next.id);
-    showHudTemporarily();
+    showHudTemporarily(true);
   }
 
   function togglePointerMode() {
@@ -278,13 +293,32 @@ export default function TvPlayer() {
         referrerPolicy="strict-origin-when-cross-origin"
       />
 
+      {pointerMode && (
+        <div
+          style={{
+            position: "fixed",
+            left: `${cursorPos.x * 100}%`,
+            top: `${cursorPos.y * 100}%`,
+            width: 24,
+            height: 24,
+            borderRadius: "50%",
+            background: "rgba(0, 229, 255, 0.9)",
+            border: "3px solid #ffffff",
+            boxShadow: "0 0 14px rgba(0, 0, 0, 0.9)",
+            transform: "translate(-50%, -50%)",
+            zIndex: 99999,
+            pointerEvents: "none"
+          }}
+        />
+      )}
+
       {!hudVisible && (
         <button
           type="button"
           className="tv-hud-peek-btn tv-focusable"
-          onClick={showHudTemporarily}
+          onClick={() => showHudTemporarily(true)}
         >
-          {pointerMode ? "Pointer ON (Back to Exit)" : "▲ TV Controls"}
+          {pointerMode ? "Pointer ON (D-Pad Move · OK Click · Back Exit)" : "▲ Press UP for Server & Controls"}
         </button>
       )}
 
@@ -297,19 +331,11 @@ export default function TvPlayer() {
           >
             <ArrowLeft size={18} /> Back
           </button>
-          <div>
-            <h2 className="tv-hud-title">{titleDetails?.title || titleDetails?.name || "Now Playing"}</h2>
-            {isTv && (
-              <span className="tv-hud-sub">
-                Season {season} · Episode {episode}
-                {currentEpData?.name ? ` — ${currentEpData.name}` : ""}
-              </span>
-            )}
-          </div>
         </div>
 
         <div className="tv-hud-group">
           <button
+            ref={serverBtnRef}
             type="button"
             className="tv-hud-btn tv-focusable"
             onClick={cycleServer}
@@ -321,9 +347,8 @@ export default function TvPlayer() {
             type="button"
             className="tv-hud-btn tv-focusable"
             onClick={togglePointerMode}
-            title="Move a mouse pointer with D-Pad to click settings inside the player"
           >
-            <MousePointer size={16} /> {pointerMode ? "Exit Pointer" : "Pointer Mode"}
+            <MousePointer size={16} /> {pointerMode ? "Exit Pointer" : "Pointer"}
           </button>
 
           {isTv && (

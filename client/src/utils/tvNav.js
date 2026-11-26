@@ -127,11 +127,16 @@ export function initTvNavigation() {
 
       let active = document.activeElement;
       if (!active || active === document.body || !candidates.includes(active)) {
-        // Set focus to the first visible candidate (or hero action / first card)
-        const first = candidates.find(c => {
+        // Prefer focusing main content (Play button or first card) rather than sidebar
+        const mainContent = document.querySelector(".tv-main");
+        const mainCandidates = mainContent
+          ? candidates.filter((c) => mainContent.contains(c))
+          : candidates;
+        const pool = mainCandidates.length > 0 ? mainCandidates : candidates;
+        const first = pool.find((c) => {
           const r = c.getBoundingClientRect();
           return r.top >= 0 && r.top < window.innerHeight;
-        }) || candidates[0];
+        }) || pool[0];
         if (first) {
           e.preventDefault();
           first.focus();
@@ -161,11 +166,11 @@ export function initTvNavigation() {
       return;
     }
 
-    // Remote Select / Enter
+    // Remote Select / Enter: native <button> and <a> already fire click on Enter
     if (key === "Enter" || keyCode === 13) {
       const active = document.activeElement;
-      if (active && active !== document.body) {
-        // Trigger click if it's an actionable element
+      if (active && active !== document.body && active.tagName !== "BUTTON" && active.tagName !== "A" && active.tagName !== "INPUT") {
+        e.preventDefault();
         active.click();
       }
     }

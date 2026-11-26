@@ -81,7 +81,6 @@ select:focus-visible {
   overflow: hidden;
 }
 
-.tv-sidebar:hover,
 .tv-sidebar:focus-within {
   width: 230px;
   background: linear-gradient(90deg, rgba(5, 7, 11, 0.98) 70%, rgba(5, 7, 11, 0.92) 100%);
@@ -119,7 +118,6 @@ select:focus-visible {
   transition: opacity 0.2s ease;
 }
 
-.tv-sidebar:hover .tv-brand-text,
 .tv-sidebar:focus-within .tv-brand-text {
   opacity: 1;
 }
@@ -155,7 +153,6 @@ select:focus-visible {
   transition: opacity 0.18s ease;
 }
 
-.tv-sidebar:hover .tv-nav-label,
 .tv-sidebar:focus-within .tv-nav-label {
   opacity: 1;
 }
@@ -453,51 +450,61 @@ select:focus-visible {
   gap: 22px;
 }
 
-/* Search Page with On-Screen TV Keyboard */
+/* Search Page with Compact On-Screen TV Keyboard */
 .tv-search-layout {
   display: grid;
-  grid-template-columns: 380px 1fr;
-  gap: 40px;
-  padding: 36px 48px;
+  grid-template-columns: 265px 1fr;
+  gap: 24px;
+  padding: 24px 32px;
   align-items: start;
 }
 
 .tv-keyboard-panel {
   background: var(--tv-surface);
   border: 1px solid var(--tv-border);
-  border-radius: 16px;
-  padding: 22px;
+  border-radius: 12px;
+  padding: 14px;
   position: sticky;
-  top: 28px;
+  top: 20px;
 }
 
 .tv-search-input {
   width: 100%;
-  padding: 14px 16px;
-  border-radius: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
   background: #06090f;
   border: 1px solid var(--tv-border);
   color: #ffffff;
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 600;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 
 .tv-kbd-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
+  gap: 6px;
 }
 
 .tv-kbd-key {
-  padding: 12px 0;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.07);
+  padding: 7px 0;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: #ffffff;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
   text-align: center;
+}
+
+.tv-search-results .tv-grid {
+  grid-template-columns: repeat(auto-fill, minmax(136px, 1fr));
+  gap: 14px;
+}
+
+.tv-search-results .tv-card {
+  width: 100%;
+  flex: none;
 }
 
 .tv-kbd-key.wide {

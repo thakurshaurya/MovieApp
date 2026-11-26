@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Play, BookmarkPlus, BookmarkCheck, ArrowLeft, Star } from "lucide-react";
 import api from "../api";
@@ -16,6 +16,13 @@ export default function TvTitle() {
   const [inWatchlist, setInWatchlist] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState(1);
   const [seasonData, setSeasonData] = useState(null);
+  const playBtnRef = useRef(null);
+
+  useEffect(() => {
+    if (!loading && item && playBtnRef.current) {
+      playBtnRef.current.focus();
+    }
+  }, [loading, item]);
 
   useEffect(() => {
     let mounted = true;
@@ -130,6 +137,7 @@ export default function TvTitle() {
 
           <div className="tv-hero-actions">
             <button
+              ref={playBtnRef}
               type="button"
               className="tv-btn-primary tv-focusable"
               onClick={() =>
